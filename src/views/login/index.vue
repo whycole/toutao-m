@@ -121,7 +121,7 @@
     }
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 .login-container {
   .send-btn{
     width: 80px;

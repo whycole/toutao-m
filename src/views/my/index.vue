@@ -1,33 +1,33 @@
 <template>
     <div class="my-container">
       <van-cell-group v-if="user" class="my-info">
-        <van-cell class="base-info" title="单元格" value="内容" center :border="false">
-          <van-image class="avatar" slot="icon" round fit="cover" src="https://img.yzcdn.cn/vant/cat.jpeg" />
-          <div class="name" slot="title">昵称</div>
+        <van-cell class="base-info" center :border="false">
+          <van-image class="avatar" slot="icon" round fit="cover" :src="currentUser.photo" />
+          <div class="name" slot="title">{{ currentUser.name }}</div>
           <van-button class="update-btn" size="small" round>编辑资料</van-button>
         </van-cell>
         <van-grid class="data-info" :border="false">
           <van-grid-item class="data-info-item">
             <div class="text-wrap" slot="text">
-              <div class="count">0</div>
+              <div class="count">{{ currentUser.art_count }}</div>
               <div class="text">头条</div>
             </div>
           </van-grid-item>
           <van-grid-item class="data-info-item">
             <div class="text-wrap" slot="text">
-              <div class="count">0</div>
+              <div class="count">{{ currentUser.follow_count }}</div>
               <div class="text">关注</div>
             </div>
           </van-grid-item>
           <van-grid-item class="data-info-item">
             <div class="text-wrap" slot="text">
-              <div class="count">0</div>
+              <div class="count">{{ currentUser.fans_count }}</div>
               <div class="text">粉丝</div>
             </div>
           </van-grid-item>
           <van-grid-item class="data-info-item">
             <div class="text-wrap" slot="text">
-              <div class="count">0</div>
+              <div class="count">{{ currentUser.like_count }}</div>
               <div class="text">获赞</div>
             </div>
           </van-grid-item>
@@ -48,16 +48,49 @@
 
       <van-cell title="消息通知" is-link to="/" />
       <van-cell class="mb-4" title="小智同学" is-link to="/" />
-      <van-cell v-if="user" class="logout-cell" title="退出登录" center/>
+      <van-cell v-if="user" class="logout-cell" title="退出登录" @click="onLogout"/>
     </div>
 </template>
 
 <script>
     import { mapState } from 'vuex'
+    import { getCurrentUser } from "../../api/user";
     export default {
       name: "MyIndex",
+      data() {
+        return {
+          currentUser: {},  //当前登录用户
+        }
+      },
       computed: {
         ...mapState(['user'])
+      },
+      methods: {
+        async loadCurrentUser() {
+          const { data } = await getCurrentUser()
+          this.currentUser = data.data
+
+        },
+        onLogout() {
+          //提示用户确认退出
+          //确认 -> 处理退出
+          this.$dialog.confirm({
+            title: '退出提示',
+            message: '确认退出吗？',
+          })
+            .then(() => { //确认执行这里
+              //清楚用户登录状态
+              this.$store.commit('setUser',null)
+            })
+            .catch(() => { //退出执行这里
+              // on cancel
+            });
+
+
+        }
+      },
+      created() {
+        this.loadCurrentUser()
       }
     }
 </script>
