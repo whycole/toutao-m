@@ -38,7 +38,7 @@ export const getCurrentUser = () => {
 }
 
 /**
- * 发送短信验证码
+ * 获取列表信息
  */
 export const getUserChannels = () => {
   return request({
