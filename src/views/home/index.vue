@@ -9,18 +9,26 @@
           <!-- 标签页组件有一个功能， 只有你第一次查看标签页的时候才会渲染里面的内容 -->
           <article-list :channel="channel"></article-list>
         </van-tab>
+        <div slot="nav-right" class="wap-nav-placeholder"></div>
+        <div slot="nav-right" @click="isChannelEditShow=true" class="wap-nav-wrap">
+          <van-icon name="wap-nav" />
+        </div>
       </van-tabs>
-      <van-popup v-model="isChannelEditShow" position="bottom" class="channel-edit-popup" closeable close-icon-position="top-left" get-container="body" style="height: 100%" />
+      <van-popup v-model="isChannelEditShow" position="bottom" class="channel-edit-popup" closeable close-icon-position="top-left" get-container="body" style="height: 100%">
+        <channel-edit :user-channels="channels" @close="isChannelEditShow = false" @update-active="onUpdateActive" :active="active"></channel-edit>
+      </van-popup>
     </div>
 </template>
 
 <script>
     import { getUserChannels } from "../../api/user";
     import ArticleList from './components/article-list'
+    import ChannelEdit from './components/channel-edit'
     export default {
       name: "HomeIndex",
       components:{
-        ArticleList
+        ArticleList,
+        ChannelEdit
       },
       data() {
         return {
@@ -34,6 +42,9 @@
           //请求获取频道数据
           const { data } = await getUserChannels()
           this.channels = data.data.channels
+        },
+        onUpdateActive(index) {
+          this.active = index
         }
       },
       created() {
@@ -74,5 +85,34 @@
       background: #3296fa;
     }
   }
+  .wap-nav-placeholder{
+    width: 33px;
+    flex-shrink: 0;
+  }
+  .wap-nav-wrap{
+    position: fixed;
+    right: 0;
+    width: 33px;
+    height: 43px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    opacity: 0.9;
+    .van-icon{
+      font-size: 24px;
+    }
+    &:before{
+      content: '';
+      width: 1px;
+      height: 43px;
+      background: url("../../assets/line.png") no-repeat;
+      background-size: contain;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+  }
+
 }
 </style>
