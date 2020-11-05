@@ -81,8 +81,8 @@
   position: fixed;
   left: 0;
   right: 0;
-  top: 90px;
   bottom: 50px;
+  top: 90px;
   overflow-y: auto;
 }
 </style>
