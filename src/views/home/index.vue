@@ -34,7 +34,7 @@
         return {
           active: 0, //控制被激活的标签
           channels: [], //频道列表
-          isChannelEditShow: false  //控制编辑频道的显示状态
+          isChannelEditShow: true  //控制编辑频道的显示状态
         }
       },
       methods: {
