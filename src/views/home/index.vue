@@ -97,10 +97,15 @@
   }
   .channel-tabs{
     display: flex;
+      /deep/.van-tabs__wrap{
+      width: 100%;
+    }
     /deep/ .van-tab{
       border-right: 1px solid #edeff3;
       border-bottom: 1px solid #edeff3;
-      flex-basis: 24%;
+      display: flex;
+      flex-basis: 27%;
+
 
     }
     /deep/ .van-tabs__line {
