@@ -124,7 +124,6 @@
 <style scoped lang="less">
 .login-container {
   .send-btn{
-    width: 80px;
     height: 25px;
     background: #ededed;
     .van-button__text{
