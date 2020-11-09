@@ -1,14 +1,19 @@
 <template>
     <div class="article-container">
       <van-nav-bar class="app-nav-bar" left-arrow @click-left="$router.back()"/>
-      <h1 class="title">{{ article.title }}</h1>
-      <van-cell center class="user-info">
-        <div slot="title" class="name">{{ article.aut_name }}</div>
-        <van-image class="avatar" slot="icon" round fit="cover" :src="article.aut_photo"></van-image>
-        <div slot="label" class="pubdate">{{ article.pubdate | relativeTime }}</div>
-        <van-button class="follow-btn" :loading="isFollowLoading" :type="article.is_followed ? 'default' : 'info'" :icon="article.is_followed ? '' : 'plus'" round size="small" @click="onFollow">{{ article.is_followed ? '已关注' : '关注' }}</van-button>
-      </van-cell>
-      <div class="markdown-body" v-html="article.content" ref="article-content"></div>
+      <div class="article-wrap">
+        <h1 class="title">{{ article.title }}</h1>
+        <van-cell center class="user-info">
+          <div slot="title" class="name">{{ article.aut_name }}</div>
+          <van-image class="avatar" slot="icon" round fit="cover" :src="article.aut_photo"></van-image>
+          <div slot="label" class="pubdate">{{ article.pubdate | relativeTime }}</div>
+          <van-button class="follow-btn" :loading="isFollowLoading" :type="article.is_followed ? 'default' : 'info'" :icon="article.is_followed ? '' : 'plus'" round size="small" @click="onFollow">{{ article.is_followed ? '已关注' : '关注' }}</van-button>
+        </van-cell>
+        <div class="markdown-body" v-html="article.content" ref="article-content"></div>
+        <comment-list :source="articleId"></comment-list>
+      </div>
+
+
 
       <div class="article-bottom">
         <van-button class="comment-btn" type="default" round size="small">写评论</van-button>
@@ -25,10 +30,13 @@
     import { getArticleById, addCollect, deleteCollect, addLike, deleteLike  } from "../../api/article";
     import { ImagePreview } from 'vant'
     import { addFollow, deleteFollow } from "../../api/user";
-
+    import CommentList from './compoents/comment-list'
 
     export default {
       name: "articleIndex",
+      components: {
+        CommentList,
+      },
       //在组件中获取动态路由参数
       //方式一： this.route.params.xxx
       //方式二： props 传参 (推荐)
@@ -132,39 +140,48 @@
 
 <style scoped lang="less">
 .article-container{
-  .title{
-    font-size: 20px;
-    color: #3a3a3a;
-    padding: 14px;
-    background: #fff;
-    margin: 0;
-  }
-  .user-info{
-    .avatar{
-      width: 35px;
-      height: 35px;
-      margin-right: 8px;
+  .article-wrap{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 46px;
+    bottom: 44px;
+    overflow-y: auto;
+    .title{
+      font-size: 20px;
+      color: #3a3a3a;
+      padding: 14px;
+      background: #fff;
+      margin: 0;
     }
-    .name{
-      font-size: 12px;
-      color: #333;
+    .user-info{
+      .avatar{
+        width: 35px;
+        height: 35px;
+        margin-right: 8px;
+      }
+      .name{
+        font-size: 12px;
+        color: #333;
+      }
+      .pubdate{
+        font-size: 12px;
+        color: #b4b4b4;
+      }
+      .follow-btn{
+        width: 85px;
+        height: 29px;
+      }
     }
-    .pubdate{
-      font-size: 12px;
-      color: #b4b4b4;
+    ul{
+      list-style: unset;
     }
-    .follow-btn{
-      width: 85px;
-      height: 29px;
+    .markdown-body{
+      padding: 14px;
+      background: #fff;
     }
   }
-  ul{
-    list-style: unset;
-  }
-  .markdown-body{
-    padding: 14px;
-    background: #fff;
-  }
+
   .article-bottom {
     position: fixed;
     left: 0;
