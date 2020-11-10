@@ -13,15 +13,17 @@
         <comment-list :source="articleId"></comment-list>
       </div>
 
-
-
       <div class="article-bottom">
-        <van-button class="comment-btn" type="default" round size="small">写评论</van-button>
+        <van-button class="comment-btn" type="default" round size="small" @click="isPostShow=true">写评论</van-button>
         <van-icon name="comment-o" info="123" color="#777"></van-icon>
         <van-icon :name="article.is_collected ? 'star' : 'star-o'" :color="article.is_collected ? 'orange' : '#777'" @click="onCollect"></van-icon>
         <van-icon :name="article.attitude===1 ? 'good-job' : 'good-job-o'" :color="article.attitude===1 ? 'hotpink' : '#777'" @click="onLike"></van-icon>
         <van-icon name="share" color="#777"></van-icon>
       </div>
+
+      <van-popup v-model="isPostShow" position="bottom">
+        <post-comment></post-comment>
+      </van-popup>
     </div>
 </template>
 
@@ -31,11 +33,12 @@
     import { ImagePreview } from 'vant'
     import { addFollow, deleteFollow } from "../../api/user";
     import CommentList from './compoents/comment-list'
-
+    import PostComment from './compoents/post-comment'
     export default {
       name: "articleIndex",
       components: {
         CommentList,
+        PostComment
       },
       //在组件中获取动态路由参数
       //方式一： this.route.params.xxx
@@ -50,6 +53,7 @@
         return {
           article: {},  //文章数据对象
           isFollowLoading: false,  //关注用户按钮 loading 状态
+          isPostShow: false  //控制发布评论的显示状态
         }
       },
       created() {

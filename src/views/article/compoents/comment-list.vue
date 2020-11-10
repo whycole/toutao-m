@@ -2,15 +2,20 @@
     <div class="comment-list-container">
       <van-cell title="全部评论"></van-cell>
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-        <van-cell v-for="(comment,index) in list" :key="index" :title="comment.content" />
+          <comment-item v-for="(comment,index) in list" :key="index" :comment="comment"></comment-item>
+<!--          <van-cell v-for="(comment,index) in list" :key="index" :title="comment.content" />-->
       </van-list>
     </div>
 </template>
 
 <script>
-    import { getComment } from "../../../api/comment";
+    import { getComments } from "../../../api/comment";
+    import CommentItem from './comment-item'
     export default {
       name: "comment-list",
+      components: {
+        CommentItem
+      },
       props: {
         source: {
           type: [String, Number, Object],
@@ -29,7 +34,7 @@
       methods: {
         async onLoad() {
           //请求获取数据
-          const { data } = await getComment({
+          const { data } = await getComments({
             type: 'a', //评论类型， a-对文章(article)的评论，c-对评论的回复
             source: this.source,  //源id ，文章 id 或 评论 id
             offset: this.offset, //获取评论数据的偏移量，值为评论 id，表示从此 id 的数据向后取，不传表示从第一页开始读取数据

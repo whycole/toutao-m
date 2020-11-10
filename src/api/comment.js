@@ -6,10 +6,33 @@ import request from "../utils/request";
 /**
  * 获取文章评论或评论回复列表
  */
-export const getComment = params => {
-    return request({
-        method: 'GET',
-        url: '/app/v1_0/comments',
-        params
-    })
+export const getComments = params => {
+  return request({
+    method: 'GET',
+    url: '/app/v1_0/comments',
+    params
+  })
+}
+
+/**
+ * 对评论或评论回复点赞
+ */
+export const addCommentLike = target => {
+  return request({
+    method: 'POST',
+    url: '/app/v1_0/comment/likings',
+    data: {
+      target //评论id
+    }
+  })
+}
+
+/**
+ * 对评论或评论回复取消点赞
+ */
+export const deleteCommentLike = commentId => {
+  return request({
+    method: 'DELETE',
+    url: `/app/v1_0/comment/likings/${commentId}`,
+  })
 }
