@@ -10,19 +10,28 @@
           <van-button class="follow-btn" :loading="isFollowLoading" :type="article.is_followed ? 'default' : 'info'" :icon="article.is_followed ? '' : 'plus'" round size="small" @click="onFollow">{{ article.is_followed ? '已关注' : '关注' }}</van-button>
         </van-cell>
         <div class="markdown-body" v-html="article.content" ref="article-content"></div>
-        <comment-list :source="articleId"></comment-list>
+
+        <comment-list :source="articleId" :list="commentList" @update-total-count="totalCommentCount = $event" @reply-click="onReplyClick"></comment-list>
       </div>
 
       <div class="article-bottom">
         <van-button class="comment-btn" type="default" round size="small" @click="isPostShow=true">写评论</van-button>
-        <van-icon name="comment-o" info="123" color="#777"></van-icon>
+        <van-icon name="comment-o" :info="totalCommentCount" color="#777"></van-icon>
         <van-icon :name="article.is_collected ? 'star' : 'star-o'" :color="article.is_collected ? 'orange' : '#777'" @click="onCollect"></van-icon>
         <van-icon :name="article.attitude===1 ? 'good-job' : 'good-job-o'" :color="article.attitude===1 ? 'hotpink' : '#777'" @click="onLike"></van-icon>
         <van-icon name="share" color="#777"></van-icon>
       </div>
 
       <van-popup v-model="isPostShow" position="bottom">
-        <post-comment></post-comment>
+        <post-comment :target="articleId" @post-success="onPostSuccess"></post-comment>
+      </van-popup>
+
+      <van-popup v-model="isReplyShow" position="bottom">
+        <!--
+        这里使用 v-if 的目的是让组件随着弹出层的显示进行渲染
+        和销毁，防止加载过的组件不重新渲染导致数据不会重复加载的问题
+         -->
+        <comment-reply v-if="isReplyShow" :comment="replyComment" @close="isReplyShow = false" :article-id="articleId"></comment-reply>
       </van-popup>
     </div>
 </template>
@@ -34,11 +43,13 @@
     import { addFollow, deleteFollow } from "../../api/user";
     import CommentList from './compoents/comment-list'
     import PostComment from './compoents/post-comment'
+    import CommentReply from './compoents/comment-reply'
     export default {
       name: "articleIndex",
       components: {
         CommentList,
-        PostComment
+        PostComment,
+        CommentReply
       },
       //在组件中获取动态路由参数
       //方式一： this.route.params.xxx
@@ -53,7 +64,11 @@
         return {
           article: {},  //文章数据对象
           isFollowLoading: false,  //关注用户按钮 loading 状态
-          isPostShow: false  //控制发布评论的显示状态
+          isPostShow: false,  //控制发布评论的显示状态
+          commentList: [],  //文章评论列表
+          totalCommentCount: 0, // 评论总数据量
+          isReplyShow: false, //控制评论回复的显示状态
+          replyComment: {}  //当前回复评论对象
         }
       },
       created() {
@@ -137,6 +152,24 @@
             this.article.attitude = 1
           }
           this.$toast.success(`${this.article.attitude===1 ? '' : '取消'}点赞成功`)
+        },
+        onPostSuccess(comment) {
+          // 把发布成功的评论数据对象放到评论列表顶部
+          this.commentList.unshift(comment)
+          // 更新评论的总数量
+          this.totalCommentCount++
+          // 关闭发布评论弹出层
+          this.isPostShow = false
+        },
+        onReplyClick(comment) {
+          console.log('ononReplyClick', comment);
+
+          this.replyComment = comment
+
+          //展示回复内容
+          this.isReplyShow = true
+
+
         }
       }
     }
