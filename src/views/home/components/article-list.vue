@@ -1,5 +1,5 @@
 <template>
-    <div class="article-list">
+    <div class="article-list" ref="article-list">
       <van-pull-refresh v-model="isPullDownLoading" :success-text="refreshSuccessText" :success-duration="1500" @refresh="onRefresh">
         <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
           <article-item v-for="(article,index) in articles" :key="index" :article="article"></article-item>
@@ -12,6 +12,7 @@
 <script>
     import { getArticles } from "../../../api/article";
     import ArticleItem from '../../../components/article-item'
+    import { debounce } from 'lodash'
     export default {
       name: "article-list",
       components: {
@@ -30,8 +31,18 @@
           finished: false,  //控制加载结束的状态，当加载结束，不再触发加载更多
           timestamp: null,  //获取下一页数据的时间戳
           isPullDownLoading: false, //下拉刷新的 loading 状态
-          refreshSuccessText: ''  //下拉刷新成功的提示文本
+          refreshSuccessText: '',  //下拉刷新成功的提示文本
+          scrollTop: 0  //列表滚动到顶部的距离
         }
+      },
+      mounted() {
+        const articleList = this.$refs['article-list']
+        articleList.onscroll = debounce(() => {
+          this.scrollTop = articleList.scrollTop
+        },50)
+      },
+      activated() {
+        this.$refs['article-list'].scrollTop = this.scrollTop
       },
       methods: {
         async onLoad() {

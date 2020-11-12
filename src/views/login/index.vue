@@ -65,8 +65,13 @@
             this.$toast.success('登录成功')
             //将后端返回的用户状态(token等数据)放到 Vuex 容器中
             this.$store.commit('setUser',data.data)
+
+            //清除 layout 的缓存，让它重新渲染
+            this.$store.commit('removeCachePage','LayoutIndex.vue')
+
             //登录成功，跳转回原来页面
-            this.$router.back() //先用这种方式，但是它不太好
+            // this.$router.back() //先用这种方式，但是它不太好，有问题
+            this.$router.push(this.$route.query.redirect || '/')
           }catch (err) {
             console.log(err);
             this.$toast.fail('登录失败，手机号或验证码错误')

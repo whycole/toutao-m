@@ -44,8 +44,8 @@
         <update-birthday v-if="isEditBirthdayShow" v-model="user.birthday" @close="isEditBirthdayShow=false"></update-birthday>
       </van-popup>
 
-      <van-popup v-model="isEditPhotoShow" position="bottom" :style="{ height: '100%' }">
-        <update-photo :file="previewImage" @close="isEditPhotoShow=false" @update-photo="user.photo=$event"></update-photo>
+      <van-popup class="update-photo-popup" v-model="isEditPhotoShow" position="bottom" :style="{ height: '100%' }">
+        <update-photo v-if="isEditPhotoShow" :file="previewImage" @close="isEditPhotoShow=false" @update-photo="user.photo=$event"></update-photo>
       </van-popup>
     </div>
 </template>
@@ -100,5 +100,8 @@
 <style scoped lang="less">
 .van-popup{
   background: #f5f7f9;
+}
+.update-photo-popup{
+  background: #000;
 }
 </style>
