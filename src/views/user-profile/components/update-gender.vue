@@ -37,7 +37,7 @@
             forbidClick: true  //禁止背景点击
           })
           //请求提交更新用户性别
-          const { data } = await updateUserProfile({
+          await updateUserProfile({
             gender: this.defaultIndex
           })
           //更新成功 -> 修改父组件的 gender ->  关闭弹出层
